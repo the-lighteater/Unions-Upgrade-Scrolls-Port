@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:spawner",
+    "iceandfire:dread_spawner",
+    "goety:void_spawner"
+  ]
+}
