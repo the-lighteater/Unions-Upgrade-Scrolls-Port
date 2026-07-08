@@ -18,20 +18,28 @@ public class AffixData {
     private Map<String, List<AttributeEffect>> effects;
     private List<String> sounds;
 
-    public String getName() { return name; }
-    public double getWeight() { return weight; }
+    public String getName() {
+        return name != null ? name : "";
+    }
+    public double getWeight() {
+        return weight;
+    }
 
     public ChatFormatting getColor() {
-        ChatFormatting format = ChatFormatting.getByName(color.toUpperCase());
+        String value = color != null ? color : "WHITE";
+        ChatFormatting format = ChatFormatting.getByName(value.toUpperCase());
         return format != null ? format : ChatFormatting.WHITE;
     }
 
     public List<AttributeEffect> getEffectsFor(String type) {
+        if (effects == null) {
+            return List.of();
+        }
         return effects.getOrDefault(type, List.of());
     }
 
     public String getDisplayName() {
-        return displayName;
+        return displayName != null ? displayName : "";
     }
 
     public boolean isDisabled() {
@@ -39,12 +47,14 @@ public class AffixData {
     }
 
     public String getTooltip() {
-        return tooltip;
+        return tooltip != null ? tooltip : "";
     }
 
     public boolean isFinal() {
         return finalAffix;
     }
 
-    public List<String> getSounds() { return sounds;}
+    public List<String> getSounds() {
+        return sounds != null ? sounds : List.of();
+    }
 }

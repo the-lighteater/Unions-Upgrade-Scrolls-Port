@@ -3,6 +3,7 @@ package dot.lighteater.upgrade_scrolls;
 import com.mojang.logging.LogUtils;
 import dot.lighteater.upgrade_scrolls.item.ModCreativeModTabs;
 import dot.lighteater.upgrade_scrolls.item.ModItems;
+import dot.lighteater.upgrade_scrolls.network.ModNetwork;
 import dot.lighteater.upgrade_scrolls.scrollsprocedures.AffixLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -29,12 +30,15 @@ public class UpgradeScrolls
         ModCreativeModTabs.register(modEventBus);
         ModItems.register(modEventBus);
 
+        ModNetwork.register();
+
         MinecraftForge.EVENT_BUS.register(this);
 
         MinecraftForge.EVENT_BUS.addListener(this::onAddReloadListeners);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
     }
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {

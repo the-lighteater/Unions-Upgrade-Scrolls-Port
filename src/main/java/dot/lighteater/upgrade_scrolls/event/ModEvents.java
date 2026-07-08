@@ -73,6 +73,10 @@ public class ModEvents {
         for (AffixData affix : AffixLoader.getAll()) {
             String affixName = affix.getName(); // e.g., "fabled"
 
+            if (affixName.isEmpty()) {
+                continue;
+            }
+
             // Check all keys in the item's NBT that start with this affix
             for (String nbtKey : tag.getAllKeys()) {
                 if (!nbtKey.startsWith("mod:tag_affix_" + affixName)) continue;
