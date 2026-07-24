@@ -65,7 +65,6 @@ public class UpgradeScroll_Item extends Item {
         ItemStack copy = itemstack.copy();
 
         if (!level.isClientSide) {
-
             boolean success = runScrollEffect(
                     level,
                     player,
@@ -74,26 +73,19 @@ public class UpgradeScroll_Item extends Item {
                     null,
                     itemstack
             );
-
-            if (success) {
-                sendScrollAnimation(player, copy);
-            }
+            if (success) sendScrollAnimation(player, copy);
         }
 
         return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
     }
 
     private static void sendScrollAnimation(Player player, ItemStack stack) {
-
         if (player instanceof ServerPlayer serverPlayer) {
-
             if (ClientConfig.ALLOW_ANIMATION.get()) {
-
                 ModNetwork.CHANNEL.send(
                         PacketDistributor.PLAYER.with(() -> serverPlayer),
                         new ScrollAnimationPacket(stack)
                 );
-
             }
         }
     }
