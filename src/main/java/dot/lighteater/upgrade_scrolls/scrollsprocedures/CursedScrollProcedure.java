@@ -1,6 +1,8 @@
 package dot.lighteater.upgrade_scrolls.scrollsprocedures;
 
 import dot.lighteater.upgrade_scrolls.Config;
+import dot.lighteater.upgrade_scrolls.UpgradeScrolls;
+import dot.lighteater.upgrade_scrolls.utility.CursedConfigLoader;
 import dot.lighteater.upgrade_scrolls.utility.ItemUtility;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -96,7 +98,8 @@ public class CursedScrollProcedure {
         }
 
         double roll = level.random.nextDouble();
-        double successChance = Config.CURSED_SCROLLS_CHANCE.get();
+        double successChance = CursedConfigLoader.getChance();
+        UpgradeScrolls.LOGGER.debug(String.valueOf(successChance));
         boolean success = roll <= successChance;
 
         if (success) {

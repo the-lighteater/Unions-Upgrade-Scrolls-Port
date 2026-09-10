@@ -5,6 +5,7 @@ import dot.lighteater.upgrade_scrolls.item.ModCreativeModTabs;
 import dot.lighteater.upgrade_scrolls.item.ModItems;
 import dot.lighteater.upgrade_scrolls.network.ModNetwork;
 import dot.lighteater.upgrade_scrolls.scrollsprocedures.AffixLoader;
+import dot.lighteater.upgrade_scrolls.utility.CursedConfigLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -21,7 +22,7 @@ public class UpgradeScrolls
 {
 
     public static final String MODID = "upgrade_scrolls";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public UpgradeScrolls(FMLJavaModLoadingContext context)
     {
@@ -36,6 +37,8 @@ public class UpgradeScrolls
 
         MinecraftForge.EVENT_BUS.addListener(this::onAddReloadListeners);
 
+        CursedConfigLoader.load();
+
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
@@ -43,5 +46,6 @@ public class UpgradeScrolls
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new AffixLoader());
+        CursedConfigLoader.load();
     }
 }
