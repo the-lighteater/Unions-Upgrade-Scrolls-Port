@@ -59,70 +59,149 @@ public class ModEvents {
         }
     }
 
-
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        if (stack.isEmpty() || !stack.hasTag()) return;
+
+        if (stack.isEmpty() || !stack.hasTag()) {
+            return;
+        }
+
         CompoundTag tag = stack.getOrCreateTag();
 
         // Iterate over all loaded affixes
         for (AffixData affix : AffixLoader.getAll()) {
-            String affixName = affix.getName(); // e.g., "fabled"
 
-            if (affixName.isEmpty()) {
+            if (affix == null) {
+                continue;
+            }
+
+            String affixName = affix.getName();
+
+            if (affixName == null || affixName.isEmpty()) {
                 continue;
             }
 
             // Check all keys in the item's NBT that start with this affix
             for (String nbtKey : tag.getAllKeys()) {
-                if (!nbtKey.startsWith("mod:tag_affix_" + affixName)) continue;
+
+                if (!nbtKey.startsWith(
+                        "mod:tag_affix_" + affixName
+                )) {
+                    continue;
+                }
 
                 // If the tag has a value > 0, the affix exists
                 if (tag.getDouble(nbtKey) > 0) {
-                    String displayName = affixName.substring(0, 1).toUpperCase() + affixName.substring(1);
+
+                    String displayName =
+                            affixName.substring(0, 1).toUpperCase()
+                                    + affixName.substring(1);
 
                     ChatFormatting color = affix.getColor();
-                    if (color == null) color = ChatFormatting.WHITE;
+
+                    if (color == null) {
+                        color = ChatFormatting.WHITE;
+                    }
+
+                    String displayNameValue = affix.getDisplayName();
+
+                    if (displayNameValue == null) {
+                        displayNameValue = affixName;
+                    }
 
                     event.getToolTip().add(
-                            Component.literal("★ Affix: ").withStyle(ChatFormatting.WHITE)
-                                    .append(Component.literal(affix.getDisplayName())
-                                            .setStyle(Style.EMPTY.withObfuscated(displayName.equals("Fabled")).withColor(color)))
+                            Component.literal("★ Affix: ")
+                                    .withStyle(ChatFormatting.WHITE)
+                                    .append(
+                                            Component.literal(
+                                                    displayNameValue
+                                            ).setStyle(
+                                                    Style.EMPTY
+                                                            .withObfuscated(
+                                                                    displayName.equals("Fabled")
+                                                            )
+                                                            .withColor(color)
+                                            )
+                                    )
                     );
+
                     break;
                 }
             }
         }
 
-        String[] cursedSlots = {"_head", "_chest", "_legs", "_feet", "", "_curio", "_shield", "_barbarian", "_magician"};
+        String[] cursedSlots = {
+                "_head",
+                "_chest",
+                "_legs",
+                "_feet",
+                "",
+                "_curio",
+                "_shield",
+                "_barbarian",
+                "_magician"
+        };
+
         for (String slotKey : cursedSlots) {
-            String streakKey = "upgradescrolls:streak" + slotKey;
+
+            String streakKey =
+                    "upgradescrolls:streak" + slotKey;
+
             if (tag.contains(streakKey)) {
+
                 int streak = tag.getInt(streakKey);
+
                 if (streak > 0) {
+
                     String type = "Guardian";
-                    if (slotKey.equals("_barbarian")) type = "Barbarian";
-                    else if (slotKey.equals("_magician")) type = "Magician";
-                    event.getToolTip().add(Component.literal("★ " + type + " + " + streak)
-                            .withStyle(ChatFormatting.YELLOW));
+
+                    if (slotKey.equals("_barbarian")) {
+                        type = "Barbarian";
+                    } else if (slotKey.equals("_magician")) {
+                        type = "Magician";
+                    }
+
+                    event.getToolTip().add(
+                            Component.literal(
+                                    "★ " + type + " + " + streak
+                            ).withStyle(
+                                    ChatFormatting.YELLOW
+                            )
+                    );
 
                     // Star display
                     StringBuilder stars = new StringBuilder();
-                    for (int i = 1; i <= CursedConfigLoader.getMaxLevel(); i++) {
+
+                    for (
+                            int i = 1;
+                            i <= CursedConfigLoader.getMaxLevel();
+                            i++
+                    ) {
+
                         if (i <= streak) {
                             stars.append("★");
                         } else {
                             stars.append("☆");
                         }
 
-                        // Add a space every 5 stars, except after the last group
-                        if (i % 5 == 0 && i != CursedConfigLoader.getMaxLevel()) {
+                        // Add a space every 5 stars,
+                        // except after the last group
+                        if (
+                                i % 5 == 0
+                                        && i != CursedConfigLoader.getMaxLevel()
+                        ) {
                             stars.append(" ");
                         }
                     }
 
-                    event.getToolTip().add(Component.literal(stars.toString()).withStyle(ChatFormatting.WHITE));
+                    event.getToolTip().add(
+                            Component.literal(
+                                    stars.toString()
+                            ).withStyle(
+                                    ChatFormatting.WHITE
+                            )
+                    );
                 }
             }
         }
@@ -132,15 +211,40 @@ public class ModEvents {
     public static void onScrollTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
 
-        if (!(stack.getItem() instanceof UpgradeScroll_Item scroll)) return;
+        if (!(stack.getItem() instanceof UpgradeScroll_Item scroll)) {
+            return;
+        }
 
         List<Component> tooltip = event.getToolTip();
 
         switch (scroll.getScrollId()) {
             case 3, 4, 5, 6, 7, 8, 22 -> AffixLoader.getAll().stream()
-                    .filter(affix -> !affix.isDisabled())
-                    .sorted(Comparator.comparingDouble(AffixData::getWeight).reversed())
-                    .forEach(affix -> tooltip.add(Component.translatable(affix.getTooltip()).withStyle(affix.getColor())));
+                    .filter(affix -> affix != null && !affix.isDisabled())
+                    .sorted(
+                            Comparator.comparingDouble(
+                                    AffixData::getWeight
+                            ).reversed()
+                    )
+                    .forEach(affix -> {
+
+                        ChatFormatting color = affix.getColor();
+
+                        if (color == null) {
+                            color = ChatFormatting.WHITE;
+                        }
+
+                        String tooltipKey = affix.getTooltip();
+
+                        if (tooltipKey == null || tooltipKey.isEmpty()) {
+                            return;
+                        }
+
+                        tooltip.add(
+                                Component.translatable(
+                                        tooltipKey
+                                ).withStyle(color)
+                        );
+                    });
         }
     }
 
