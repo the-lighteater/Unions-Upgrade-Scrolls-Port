@@ -1,6 +1,6 @@
 package dot.lighteater.upgrade_scrolls.scrollsprocedures;
 
-import dot.lighteater.upgrade_scrolls.utility.ItemUtility;
+import dot.lighteater.upgrade_scrolls.utility.ModUtility;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -22,28 +22,26 @@ public class UpgradeScrollProcedure {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static boolean execute(Level level, Player player, EquipmentSlot slot, int isShield, int isCurio, boolean serverSide, ItemStack targetItem) {
-        if (level.isClientSide && serverSide) return false;
-        ItemStack target;
-
+    public static boolean execute(Level level, Player player, EquipmentSlot slot, int isShield, int isCurio, ItemStack targetItem) {
         boolean armorSlot = slot == EquipmentSlot.HEAD || slot == EquipmentSlot.CHEST ||
                 slot == EquipmentSlot.LEGS || slot == EquipmentSlot.FEET;
-        if (!(serverSide) && armorSlot) return false;
 
-        if (serverSide) target = player.getItemBySlot(slot);
-        else target = targetItem;
+        ItemStack target =
+                targetItem != null
+                        ? targetItem
+                        : player.getItemBySlot(slot);
 
-        int itemType = ItemUtility.isValidWeaponOrCurio(target);
+        int itemType = ModUtility.isValidWeaponOrCurio(target);
         if (itemType != 0 && armorSlot) return false;
         if (target.isEmpty()) {
             player.displayClientMessage(Component.literal("No item equipped in " + slot.getName()), true);
             return false;
         } else if ((itemType == 0) && slot != EquipmentSlot.HEAD && slot != EquipmentSlot.CHEST
                 && slot != EquipmentSlot.LEGS && slot != EquipmentSlot.FEET
-                || (isShield == 0 && ItemUtility.isValidShield(target))) { return false;}
+                || (isShield == 0 && ModUtility.isValidShield(target))) { return false;}
 
-        if (isShield == 0 && ItemUtility.isValidShield(target)) return false;
-        else if (isShield != 0 && !(ItemUtility.isValidShield(target))) return false;
+        if (isShield == 0 && ModUtility.isValidShield(target)) return false;
+        else if (isShield != 0 && !(ModUtility.isValidShield(target))) return false;
 
         String slotKey = "";
         if (slot == EquipmentSlot.HEAD) {
@@ -86,8 +84,7 @@ public class UpgradeScrollProcedure {
             var soundEvent = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getValue(soundRL);
             if (soundEvent == null) continue;
 
-            if (level.isClientSide) level.playLocalSound(player.getX(), player.getY(), player.getZ(), soundEvent, SoundSource.PLAYERS, 1f, 1f, false);
-            else level.playSound(null, player.getX(), player.getY(), player.getZ(), soundEvent, SoundSource.PLAYERS, 1f, 1f);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), soundEvent, SoundSource.PLAYERS, 1f, 1f);
         }
 
         for (Player p : level.players()) {

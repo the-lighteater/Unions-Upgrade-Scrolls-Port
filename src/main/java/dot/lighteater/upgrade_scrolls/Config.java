@@ -17,12 +17,6 @@ public class Config
     public static final ForgeConfigSpec.ConfigValue<Integer> GOLDEN_MYSTERY_SCROLL_DROP_RATE;
     public static final ForgeConfigSpec.ConfigValue<Integer> MYSTERY_SCROLL_DROP_AMOUNT;
 
-    public static final ForgeConfigSpec.ConfigValue<Integer> CURSED_SCROLLS_MAX;
-    public static final ForgeConfigSpec.ConfigValue<Double> CURSED_SCROLLS_CHANCE;
-
-    public static final ForgeConfigSpec.ConfigValue<String> CURSED_SCROLLS_ATTRIBUTE;
-    public static final ForgeConfigSpec.ConfigValue<Double> CURSED_SCROLLS_STRENGTH;
-
     public static final ForgeConfigSpec.ConfigValue<Boolean> ALLOW_BOTH_HANDS;
 
     static {
@@ -33,22 +27,6 @@ public class Config
 
         MYSTERY_SCROLL_DROP_AMOUNT = BUILDER.comment("The upper limit of mystery scrolls dropped from spawners")
                 .define("Max amount of scrolls dropped", 3);
-
-        BUILDER.pop();
-
-        BUILDER.push("Cursed Scrolls");
-
-        CURSED_SCROLLS_MAX = BUILDER.comment("The limit of cursed scrolls")
-                .define("Max cursed scroll level", 15);
-
-        CURSED_SCROLLS_CHANCE = BUILDER.comment("The chances for cursed scrolls")
-                .defineInRange("Cursed scroll chances", .8, 0, 1);
-
-        CURSED_SCROLLS_ATTRIBUTE = BUILDER.comment("The attribute given by cursed scrolls (excludes Magician & Barbarian)")
-                        .define("Valid Attribute ID", "minecraft:generic.armor");
-
-        CURSED_SCROLLS_STRENGTH = BUILDER.comment("The strength of one level from a cursed scroll (excludes Magician & Barbarian)")
-                        .defineInRange("Strength of Attribute per level", 0.5, 0.0, 100);
 
         BUILDER.pop();
 

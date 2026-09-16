@@ -3,6 +3,7 @@ package dot.lighteater.upgrade_scrolls;
 import com.mojang.logging.LogUtils;
 import dot.lighteater.upgrade_scrolls.item.ModCreativeModTabs;
 import dot.lighteater.upgrade_scrolls.item.ModItems;
+import dot.lighteater.upgrade_scrolls.menu.UpgradeScrollsMenus;
 import dot.lighteater.upgrade_scrolls.network.ModNetwork;
 import dot.lighteater.upgrade_scrolls.scrollsprocedures.AffixLoader;
 import dot.lighteater.upgrade_scrolls.utility.CursedConfigLoader;
@@ -32,6 +33,8 @@ public class UpgradeScrolls
         ModItems.register(modEventBus);
 
         ModNetwork.register();
+
+        UpgradeScrollsMenus.MENUS.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
 

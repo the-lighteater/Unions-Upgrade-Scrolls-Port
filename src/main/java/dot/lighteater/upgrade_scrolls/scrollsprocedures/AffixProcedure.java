@@ -1,7 +1,7 @@
 package dot.lighteater.upgrade_scrolls.scrollsprocedures;
 
 import dot.lighteater.upgrade_scrolls.Config;
-import dot.lighteater.upgrade_scrolls.utility.ItemUtility;
+import dot.lighteater.upgrade_scrolls.utility.ModUtility;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -28,17 +28,17 @@ public class AffixProcedure {
 
         if (!stack.hasTag()) return;
 
-        if (ItemUtility.isValidWeapon(stack)
+        if (ModUtility.isValidWeapon(stack)
                 && (((slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND)
                     && Config.ALLOW_BOTH_HANDS.get()) || (slot == EquipmentSlot.MAINHAND && event.getSlotType() == EquipmentSlot.MAINHAND)))
             applyAttributes(stack, "", "weapon", event);
 
-        if (ItemUtility.isValidBow(stack)
+        if (ModUtility.isValidBow(stack)
                 && (((slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND)
                     && Config.ALLOW_BOTH_HANDS.get()) || (slot == EquipmentSlot.MAINHAND && event.getSlotType() == EquipmentSlot.MAINHAND)))
             applyAttributes(stack, "", "bow", event);
 
-        if (ItemUtility.isValidShield(stack)
+        if (ModUtility.isValidShield(stack)
                 && (((slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND)
                     && Config.ALLOW_BOTH_HANDS.get()) || (slot == EquipmentSlot.OFFHAND && event.getSlotType() == EquipmentSlot.OFFHAND)))
             applyAttributes(stack, "_shield", "shield", event);

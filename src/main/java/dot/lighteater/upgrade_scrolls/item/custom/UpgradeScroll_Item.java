@@ -4,7 +4,6 @@ import dot.lighteater.upgrade_scrolls.ClientConfig;
 import dot.lighteater.upgrade_scrolls.network.ModNetwork;
 import dot.lighteater.upgrade_scrolls.network.ScrollAnimationPacket;
 import dot.lighteater.upgrade_scrolls.scrollsprocedures.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -12,10 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickAction;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 
@@ -58,62 +54,78 @@ public class UpgradeScroll_Item extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(
+            Level level,
+            Player player,
+            InteractionHand hand
+    ) {
+        ItemStack itemstack =
+                player.getItemInHand(hand);
 
-        ItemStack itemstack = player.getItemInHand(hand);
+        ItemStack copy =
+                itemstack.copy();
 
-        ItemStack copy = itemstack.copy();
+        if (!level.isClientSide()) {
 
-        if (!level.isClientSide) {
-            boolean success = runScrollEffect(
-                    level,
-                    player,
-                    scrollId,
-                    true,
-                    null,
-                    itemstack
-            );
-            if (success) sendScrollAnimation(player, copy);
+            boolean success =
+                    runScrollEffect(
+                            level,
+                            player,
+                            scrollId,
+                            null,
+                            itemstack
+                    );
+
+            if (success) {
+                sendScrollAnimation(
+                        player,
+                        copy
+                );
+            }
         }
 
-        return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
+        return InteractionResultHolder.sidedSuccess(
+                itemstack,
+                level.isClientSide()
+        );
     }
 
-    private static void sendScrollAnimation(Player player, ItemStack stack) {
+    private static void sendScrollAnimation(
+            Player player,
+            ItemStack stack
+    ) {
         if (player instanceof ServerPlayer serverPlayer) {
+
             if (ClientConfig.ALLOW_ANIMATION.get()) {
+
                 ModNetwork.CHANNEL.send(
-                        PacketDistributor.PLAYER.with(() -> serverPlayer),
+                        PacketDistributor.PLAYER.with(
+                                () -> serverPlayer
+                        ),
                         new ScrollAnimationPacket(stack)
                 );
             }
         }
     }
 
-    @Override
-    public boolean overrideOtherStackedOnMe(
-            ItemStack scroll,
+    public static boolean runScrollEffectFromMenu(
+            ServerPlayer player,
+            int id,
             ItemStack targetItem,
-            Slot slot,
-            ClickAction action,
-            Player player,
-            SlotAccess access
+            ItemStack scrollItem
     ) {
-        if (action != ClickAction.SECONDARY) return false;
-        if (scrollId == 0 || scrollId == 20 || scrollId == 21) return false;
-
-        if (!(player.level().isClientSide && (!(player.isCreative())))) runScrollEffect(player.level(), player, scrollId, false, targetItem, scroll);
-        else if (player.isCreative() && player.level().isClientSide) runScrollEffect(player.level(), player, scrollId, false, targetItem, scroll);
-        return true;
+        return runScrollEffect(
+                player.level(),
+                player,
+                id,
+                targetItem,
+                scrollItem
+        );
     }
 
-    private static boolean runScrollEffect(Level level, Player player, int id, boolean serverSide, ItemStack targetItem, ItemStack scrollItem) {
-        Runnable consumeScroll = () -> {
-            if (serverSide) scrollItem.shrink(1);
-            else if (!(player.isCreative())) {
+    private static boolean runScrollEffect(Level level, Player player, int id, ItemStack targetItem, ItemStack scrollItem) {
+        Runnable consumeScroll = () ->
                 scrollItem.shrink(1);
-            }
-        };
 
         Runnable playSuccessEffect = () -> {
             if (level instanceof ServerLevel serverLevel) {
@@ -153,62 +165,62 @@ public class UpgradeScroll_Item extends Item {
                 );
             }
             case 1 -> {
-                return handleCursedResult(CursedScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 1, 0, serverSide, targetItem),
+                return handleCursedResult(CursedScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 1, 0, targetItem),
                         consumeScroll,
                         playSuccessEffect,
                         playFailedEffect);
             }
             case 2 -> {
-                return handleCursedResult(CursedScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 0, 0, serverSide, targetItem),
+                return handleCursedResult(CursedScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 0, 0, targetItem),
                         consumeScroll,
                         playSuccessEffect,
                         playFailedEffect);
             }
             case 3 -> {
-                return tryUpgradeGolden(UpgradeScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 0, serverSide, targetItem),
+                return tryUpgradeGolden(UpgradeScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 0,  targetItem),
                     consumeScroll,
                     playSuccessEffect
                 );
             }
             case 4, 5, 6, 7 -> {
                 return tryUpgradeGolden(
-                        UpgradeScrollProcedure.execute(level, player, ARMOR_SLOTS[id - 4], 0, 0, serverSide, targetItem),
+                        UpgradeScrollProcedure.execute(level, player, ARMOR_SLOTS[id - 4], 0, 0,  targetItem),
                         consumeScroll,
                         playSuccessEffect
                 );
             }
             case 8 -> {
-                return tryUpgradeGolden(UpgradeScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 1, 0, serverSide, targetItem),
+                return tryUpgradeGolden(UpgradeScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 1, 0,  targetItem),
                     consumeScroll,
                     playSuccessEffect
                 );
             }
             case 9, 10, 11, 12 -> {
-                return handleCursedResult(CursedScrollProcedure.execute(level, player, ARMOR_SLOTS[id - 9], 0, 0, 0, serverSide, targetItem),
+                return handleCursedResult(CursedScrollProcedure.execute(level, player, ARMOR_SLOTS[id - 9], 0, 0, 0,  targetItem),
                         consumeScroll,
                         playSuccessEffect,
                         playFailedEffect);
             }
             case 13 -> {
-                return handleCursedResult(CursedScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 1, 0, 0, serverSide, targetItem),
+                return handleCursedResult(CursedScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 1, 0, 0,  targetItem),
                         consumeScroll,
                         playSuccessEffect,
                         playFailedEffect);
             }
             case 14 -> {
-                return tryUpgradeGolden(GoldenScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 0, serverSide, targetItem),
+                return tryUpgradeGolden(GoldenScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 0,  targetItem),
                     consumeScroll,
                     playSuccessEffect
                 );
             }
             case 15 -> {
-                return tryUpgradeGolden(GoldenScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 1, 0, serverSide, targetItem),
+                return tryUpgradeGolden(GoldenScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 1, 0,  targetItem),
                     consumeScroll,
                     playSuccessEffect
                 );
             }
             case 16, 17, 18, 19 -> {
-                return tryUpgradeGolden(GoldenScrollProcedure.execute(level, player, ARMOR_SLOTS[id - 16], 0, 0, serverSide, targetItem),
+                return tryUpgradeGolden(GoldenScrollProcedure.execute(level, player, ARMOR_SLOTS[id - 16], 0, 0,  targetItem),
                         consumeScroll,
                         playSuccessEffect
                 );
@@ -225,19 +237,19 @@ public class UpgradeScroll_Item extends Item {
                 );
             }
             case 22 -> {
-                return tryUpgradeGolden(UpgradeScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 1, serverSide, targetItem),
+                return tryUpgradeGolden(UpgradeScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 1,  targetItem),
                     consumeScroll,
                     playSuccessEffect
                 );
             }
             case 23 -> {
-                return handleCursedResult(CursedScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 0, 1, serverSide, targetItem),
+                return handleCursedResult(CursedScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 0, 1,  targetItem),
                         consumeScroll,
                         playSuccessEffect,
                         playFailedEffect);
             }
             case 24 -> {
-                return tryUpgradeGolden(GoldenScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 1, serverSide, targetItem),
+                return tryUpgradeGolden(GoldenScrollProcedure.execute(level, player, EquipmentSlot.MAINHAND, 0, 1,  targetItem),
                     consumeScroll,
                     playSuccessEffect
                 );
