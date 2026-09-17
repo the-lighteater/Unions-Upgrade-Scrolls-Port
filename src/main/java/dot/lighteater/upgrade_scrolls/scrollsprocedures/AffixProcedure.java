@@ -47,19 +47,6 @@ public class AffixProcedure {
             applyAttributes(stack, "_" + slot.getName(), "armor", event);
     }
 
-    @SubscribeEvent
-    public static void onCurioAttributes(CurioAttributeModifierEvent event) {
-        ItemStack stack = event.getItemStack();
-        if (!stack.isEmpty() && stack.hasTag()) {
-            if (stack.getOrCreateTag().getDouble("upgradescrolls:streak_curio") != 0.0)
-                event.addModifier(Attributes.ARMOR, new AttributeModifier(getItemUUID(stack, "curio_guardian"),
-                        "union_upgrade_scrolls.curio.guardian",
-                        (stack.getOrCreateTag().getDouble("upgradescrolls:streak_curio") / 2),
-                        AttributeModifier.Operation.ADDITION));
-            applyCurioAttributes(stack, event);
-        }
-    }
-
     public static void applyAttributes(ItemStack stack, String slot, String type, ItemAttributeModifierEvent event) {
         AffixData affix = null;
         for (AffixData affixes : AffixLoader.getAll()) {
@@ -74,35 +61,6 @@ public class AffixProcedure {
         if (newData == null) return;
 
         List<AttributeEffect> stats = newData.getEffectsFor(type);
-        if (stats == null) return;
-
-        for (AttributeEffect attr : stats) {
-            Attribute attribute = attr.getAttribute();
-            if (attribute == null) continue;
-
-            event.addModifier(attribute, new AttributeModifier(
-                    getItemUUID(stack, affix.getName() + "_" + attr.getEndString() + "_bonus"),
-                    "union_upgrade_scrolls." + affix.getName() + "." + attr.getEndString(),
-                    attr.getValue(),
-                    attr.getOperation()
-            ));
-        }
-    }
-
-    public static void applyCurioAttributes(ItemStack stack, CurioAttributeModifierEvent event) {
-        AffixData affix = null;
-        for (AffixData affixes : AffixLoader.getAll()) {
-            if (stack.getOrCreateTag().getDouble(affixKey + "_" + affixes.getName() + "_curio") > 0 && !affixes.isDisabled()) {
-                affix = affixes;
-                break;
-            }
-        }
-
-        if (affix == null) return;
-        AffixData newData = AffixLoader.AFFIXES.get(new ResourceLocation("upgrade_scrolls", affix.getName()));
-        if (newData == null) return;
-
-        List<AttributeEffect> stats = newData.getEffectsFor("curio");
         if (stats == null) return;
 
         for (AttributeEffect attr : stats) {

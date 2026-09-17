@@ -1,6 +1,7 @@
 package dot.lighteater.upgrade_scrolls;
 
 import com.mojang.logging.LogUtils;
+import dot.lighteater.upgrade_scrolls.compat.CurioAffixProcedure;
 import dot.lighteater.upgrade_scrolls.item.ModCreativeModTabs;
 import dot.lighteater.upgrade_scrolls.item.ModItems;
 import dot.lighteater.upgrade_scrolls.menu.UpgradeScrollsMenus;
@@ -10,6 +11,7 @@ import dot.lighteater.upgrade_scrolls.utility.CursedConfigLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -25,6 +27,8 @@ public class UpgradeScrolls
     public static final String MODID = "upgrade_scrolls";
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    public static boolean curioLoaded = false;
+
     public UpgradeScrolls(FMLJavaModLoadingContext context)
     {
         IEventBus modEventBus = context.getModEventBus();
@@ -33,6 +37,11 @@ public class UpgradeScrolls
         ModItems.register(modEventBus);
 
         ModNetwork.register();
+
+        if (ModList.get().isLoaded("curios")) {
+            MinecraftForge.EVENT_BUS.register(CurioAffixProcedure.class);
+            curioLoaded = true;
+        }
 
         UpgradeScrollsMenus.MENUS.register(modEventBus);
 

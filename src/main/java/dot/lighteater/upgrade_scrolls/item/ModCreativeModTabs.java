@@ -7,6 +7,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -55,10 +56,13 @@ public class ModCreativeModTabs {
                                 output.accept(ModItems.UPGRADE_SCROLL_19.get());
                                 output.accept(ModItems.UPGRADE_SCROLL_20.get());
                                 output.accept(ModItems.UPGRADE_SCROLL_21.get());
-                                output.accept(ModItems.UPGRADE_SCROLL_22.get());
-                                output.accept(ModItems.UPGRADE_SCROLL_23.get());
-                                output.accept(ModItems.UPGRADE_SCROLL_24.get());
 
+                                // Curios compatibility
+                                if (ModList.get().isLoaded("curios")) {
+                                    output.accept(ModItems.UPGRADE_SCROLL_22.get());
+                                    output.accept(ModItems.UPGRADE_SCROLL_23.get());
+                                    output.accept(ModItems.UPGRADE_SCROLL_24.get());
+                                }
                             })
                             .build()
             );
