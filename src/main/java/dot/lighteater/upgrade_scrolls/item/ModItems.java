@@ -315,6 +315,10 @@ public class ModItems {
     }
 
     public static void register(IEventBus eventBus) {
+        if (ModList.get().isLoaded("curios")) {
+            registerCurioItems();
+        }
+
         ITEMS.register(eventBus);
     }
 }
