@@ -1,6 +1,8 @@
 package dot.lighteater.upgrade_scrolls.utility;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -8,7 +10,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.ModList;
 
-public class ItemUtility {
+public class ModUtility {
     private static final ResourceLocation[] ADDITIONAL_WEAPON_TAGS = new ResourceLocation[] {
             new ResourceLocation("forge", "swords"),
             new ResourceLocation("forge", "tools/swords"),
@@ -285,5 +287,11 @@ public class ItemUtility {
             }
         }
         return false;
+    }
+
+    public static SoundEvent getSoundEvent(String soundID) {
+           ResourceLocation soundId = new ResourceLocation(soundID);
+           SoundEvent sound = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getValue(soundId);
+           return (!(sound == null)) ? sound : null;
     }
 }

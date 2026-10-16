@@ -1,11 +1,11 @@
 {
   "name": "fabled",
   "weight": 0.005,
-  "color": "BLACK",
+  "colorNum": "0xFF000000",
   "displayName": "Fabled",
   "disabled": false,
-  "tooltip": "tooltip.upgrade_scrolls.upgrade_scroll.line_fabled",
   "finalAffix": true,
+  "hidden": true,
 
   "effects": {
     "weapon": [

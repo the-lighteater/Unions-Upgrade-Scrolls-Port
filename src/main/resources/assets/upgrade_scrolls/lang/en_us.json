@@ -119,13 +119,5 @@
   "tooltip.upgrade_scrolls.upgrade_scroll_golden_curio.line3": "§7- Unbreakable prevents your items from being",
   "tooltip.upgrade_scrolls.upgrade_scroll_golden_curio.line4": "§7destroyed by scrolls or durability loss.",
 
-  "tooltip.upgrade_scrolls.upgrade_scroll.line_junk": "§f* 30% Junk",
-  "tooltip.upgrade_scrolls.upgrade_scroll.line_ordinary": "§a* 20% Ordinary",
-  "tooltip.upgrade_scrolls.upgrade_scroll.line_unique": "§b* 20% Unique",
-  "tooltip.upgrade_scrolls.upgrade_scroll.line_refined": "§5* 15% Refined",
-  "tooltip.upgrade_scrolls.upgrade_scroll.line_godly": "§e* 10% Godly",
-  "tooltip.upgrade_scrolls.upgrade_scroll.line_mythical": "§c* 5% Mythical",
-  "tooltip.upgrade_scrolls.upgrade_scroll.line_fabled": "§0* ?% ???",
-
   "creativetab.upgrade_scrolls": "Union's Upgrade Scrolls"
 }

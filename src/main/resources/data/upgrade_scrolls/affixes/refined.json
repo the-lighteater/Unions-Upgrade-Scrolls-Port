@@ -1,10 +1,9 @@
 {
   "name": "refined",
   "weight": 0.15,
-  "color": "DARK_PURPLE",
+  "colorNum": "0xFFa800a7",
   "displayName": "Refined",
   "disabled": false,
-  "tooltip": "tooltip.upgrade_scrolls.upgrade_scroll.line_refined",
   "finalAffix": false,
 
   "effects": {

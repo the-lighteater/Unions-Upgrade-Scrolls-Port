@@ -1,111 +1,226 @@
 package dot.lighteater.upgrade_scrolls.scrollsprocedures;
 
-import dot.lighteater.upgrade_scrolls.Config;
-import dot.lighteater.upgrade_scrolls.utility.ItemUtility;
+import dot.lighteater.upgrade_scrolls.UpgradeScrolls;
+import dot.lighteater.upgrade_scrolls.utility.CursedConfigLoader;
+import dot.lighteater.upgrade_scrolls.utility.ModUtility;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber
 public class CursedAttributeProcedure {
+
     @SubscribeEvent
-    public static void addCursedAttributeModifier(ItemAttributeModifierEvent event) {
+    public static void addCursedAttributeModifier(
+            ItemAttributeModifierEvent event
+    ) {
+
         ItemStack stack = event.getItemStack();
 
-        if (!stack.hasTag()) return;
+        if (!stack.hasTag()) {
+            return;
+        }
 
         EquipmentSlot slot = event.getSlotType();
 
-        double level = Config.CURSED_SCROLLS_STRENGTH.get();
+        for (CursedConfigLoader.ModifierData modifier
+                : CursedConfigLoader.getModifiers()) {
 
-        ResourceLocation id = new ResourceLocation(Config.CURSED_SCROLLS_ATTRIBUTE.get());
-        Attribute attr = ForgeRegistries.ATTRIBUTES.getValue(id);
+            if (!isApplicable(
+                    modifier,
+                    stack,
+                    slot
+            )) {
+                continue;
+            }
 
-        boolean goodID = attr != null;
+            ResourceLocation attributeId =
+                    ResourceLocation.tryParse(
+                            modifier.getAttributeName()
+                    );
 
-        if ((ItemUtility.isValidWeapon(stack) || ItemUtility.isValidBow(stack))
-                && (slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND) && stack.getOrCreateTag().getDouble("upgradescrolls:streak_barbarian") > 0) {
-            event.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(
-                    getItemUUID(stack, "cursed_damage_bonus_weapon"),
-                    "union_upgrade_scrolls.cursed.damage",
-                    (stack.getOrCreateTag().getDouble("upgradescrolls:streak_barbarian") / 40),
-                    AttributeModifier.Operation.MULTIPLY_BASE));
-        }
+            if (attributeId == null) {
+                continue;
+            }
 
-        else if (ItemUtility.isValidShield(stack) && (slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND)
-                && stack.getOrCreateTag().getDouble("upgradescrolls:streak_shield") > 0
-                && goodID) {
-            event.addModifier(attr, new AttributeModifier(
-                    getItemUUID(stack, "cursed_armor_bonus_shield"),
-                    "union_upgrade_scrolls.cursed.armor",
-                    (stack.getOrCreateTag().getDouble("upgradescrolls:streak_shield") * level),
-                    AttributeModifier.Operation.ADDITION));
-        }
+            Attribute attribute =
+                    ForgeRegistries.ATTRIBUTES.getValue(
+                            attributeId
+                    );
 
-        else if (stack.getItem() instanceof ArmorItem && slot == EquipmentSlot.HEAD
-                && (stack.getOrCreateTag().getDouble("upgradescrolls:streak_head") > 0)
-                && goodID) {
-            event.addModifier(attr, new AttributeModifier(
-                    getItemUUID(stack, "cursed_armor_bonus_head"),
-                    "union_upgrade_scrolls.cursed.armor",
-                    (stack.getOrCreateTag().getDouble("upgradescrolls:streak_head") * level),
-                    AttributeModifier.Operation.ADDITION));
-        }
+            if (attribute == null) {
+                continue;
+            }
 
-        else if (stack.getItem() instanceof ArmorItem && slot == EquipmentSlot.CHEST
-                && (stack.getOrCreateTag().getDouble("upgradescrolls:streak_chest") > 0)
-                && goodID) {
-            event.addModifier(attr, new AttributeModifier(
-                    getItemUUID(stack, "cursed_armor_bonus_chest"),
-                    "union_upgrade_scrolls.cursed.armor",
-                    (stack.getOrCreateTag().getDouble("upgradescrolls:streak_chest") * level),
-                    AttributeModifier.Operation.ADDITION));
-        }
+            String streakKey =
+                    "upgradescrolls:streak_"
+                            + modifier.getStreakKey();
 
-        else if (stack.getItem() instanceof ArmorItem && slot == EquipmentSlot.LEGS
-                && (stack.getOrCreateTag().getDouble("upgradescrolls:streak_legs") > 0)
-                && goodID) {
-            event.addModifier(attr, new AttributeModifier(
-                    getItemUUID(stack, "cursed_armor_bonus_legs"),
-                    "union_upgrade_scrolls.cursed.armor",
-                    (stack.getOrCreateTag().getDouble("upgradescrolls:streak_legs") * level),
-                    AttributeModifier.Operation.ADDITION));
-        }
+            double streak =
+                    stack.getOrCreateTag()
+                            .getDouble(streakKey);
 
-        else if (stack.getItem() instanceof ArmorItem && slot == EquipmentSlot.FEET
-                && (stack.getOrCreateTag().getDouble("upgradescrolls:streak_feet") > 0)
-                && goodID) {
-            event.addModifier(attr, new AttributeModifier(
-                    getItemUUID(stack, "cursed_armor_bonus_feet"),
-                    "union_upgrade_scrolls.cursed.armor",
-                    (stack.getOrCreateTag().getDouble("upgradescrolls:streak_feet") * level),
-                    AttributeModifier.Operation.ADDITION));
+            if (streak <= 0) {
+                continue;
+            }
+
+            double amount =
+                    streak * modifier.getLevelBonus();
+
+            AttributeModifier.Operation operation =
+                    parseOperation(
+                            modifier.getOperation()
+                    );
+
+            if (operation == null) {
+                continue;
+            }
+
+            event.addModifier(
+                    attribute,
+                    new AttributeModifier(
+                            getItemUUID(
+                                    stack,
+                                    modifier.getStreakKey()
+                                            + "_"
+                                            + modifier.getAttributeName()
+                                            + "_"
+                                            + modifier.getOperation()
+                            ),
+                            "union_upgrade_scrolls.cursed."
+                                    + modifier.getStreakKey()
+                                    + "."
+                                    + modifier.getAttributeName(),
+                            amount,
+                            operation
+                    )
+            );
         }
     }
 
-    public static UUID getItemUUID(ItemStack stack, String attributeKey) {
-        String base = stack.getOrCreateTag().getString("upgrade_scrolls:item_uuid");
+    private static boolean isApplicable(
+            CursedConfigLoader.ModifierData modifier,
+            ItemStack stack,
+            EquipmentSlot slot
+    ) {
 
-        // If item has no UUID assigned, assign one once
-        if (base.isEmpty()) {
-            base = UUID.randomUUID().toString();
-            stack.getOrCreateTag().putString("upgrade_scrolls:item_uuid", base);
+        String equipment =
+                modifier.getEquipment();
+
+        if (equipment == null) {
+            return false;
         }
 
-        // Combine the item UUID + attribute key into a stable new UUID
-        return UUID.nameUUIDFromBytes((base + attributeKey).getBytes());
+        return switch (equipment.toUpperCase()) {
+            case "WEAPON" -> isWeaponApplication(stack, slot);
+            case "SHIELD" -> isShieldApplication(stack, slot);
+            case "HEAD" -> isHeadApplication(stack, slot);
+            case "CHEST" -> isChestApplication(stack, slot);
+            case "LEGS" -> isLegsApplication(stack, slot);
+            case "FEET" -> isFeetApplication(stack, slot);
+            default -> false;
+        };
+    }
+
+    private static boolean isWeaponApplication(
+            ItemStack stack,
+            EquipmentSlot slot
+    ) {
+
+        return (slot == EquipmentSlot.MAINHAND
+                || slot == EquipmentSlot.OFFHAND)
+                && (
+                ModUtility.isValidWeapon(stack)
+                        || ModUtility.isValidBow(stack)
+        );
+    }
+
+    private static boolean isShieldApplication(
+            ItemStack stack,
+            EquipmentSlot slot
+    ) {
+        return (slot == EquipmentSlot.MAINHAND
+                || slot == EquipmentSlot.OFFHAND)
+                && ModUtility.isValidShield(stack);
+    }
+
+    private static boolean isHeadApplication(
+            ItemStack stack,
+            EquipmentSlot slot
+    ) {
+        return slot == EquipmentSlot.HEAD
+                && ModUtility.isValidHelmet(stack);
+    }
+
+    private static boolean isChestApplication(
+            ItemStack stack,
+            EquipmentSlot slot
+    ) {
+        return slot == EquipmentSlot.CHEST
+                && ModUtility.isValidChestplate(stack);
+    }
+
+    private static boolean isLegsApplication(
+            ItemStack stack,
+            EquipmentSlot slot
+    ) {
+        return slot == EquipmentSlot.LEGS
+                && ModUtility.isValidLeggings(stack);
+    }
+
+    private static boolean isFeetApplication(
+            ItemStack stack,
+            EquipmentSlot slot
+    ) {
+        return slot == EquipmentSlot.FEET
+                && ModUtility.isValidBoots(stack);
+    }
+
+    private static AttributeModifier.Operation parseOperation(
+            String operation
+    ) {
+        if (operation == null) {
+            return null;
+        }
+        return switch (operation.toUpperCase()) {
+            case "ADDITION" -> AttributeModifier.Operation.ADDITION;
+            case "MULTIPLY_BASE" -> AttributeModifier.Operation.MULTIPLY_BASE;
+            case "MULTIPLY_TOTAL" -> AttributeModifier.Operation.MULTIPLY_TOTAL;
+            default -> null;
+        };
+    }
+
+    public static UUID getItemUUID(
+            ItemStack stack,
+            String attributeKey
+    ) {
+
+        String base =
+                stack.getOrCreateTag()
+                        .getString(
+                                "upgrade_scrolls:item_uuid"
+                        );
+
+        if (base.isEmpty()) {
+            base = UUID.randomUUID().toString();
+
+            stack.getOrCreateTag().putString(
+                    "upgrade_scrolls:item_uuid",
+                    base
+            );
+        }
+
+        return UUID.nameUUIDFromBytes(
+                (base + attributeKey).getBytes(StandardCharsets.UTF_8)
+        );
     }
 }

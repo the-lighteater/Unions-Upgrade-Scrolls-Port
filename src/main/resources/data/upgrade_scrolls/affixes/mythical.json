@@ -1,10 +1,9 @@
 {
   "name": "mythical",
   "weight": 0.05,
-  "color": "RED",
+  "colorNum": "0xFFfb5454",
   "displayName": "Mythical",
   "disabled": false,
-  "tooltip": "tooltip.upgrade_scrolls.upgrade_scroll.line_mythical",
   "finalAffix": false,
 
   "effects": {

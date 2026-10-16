@@ -1,8 +1,7 @@
-package dot.lighteater.upgrade_scrolls.scrollsprocedures;
+package dot.lighteater.upgrade_scrolls.affix;
 
 import net.minecraft.ChatFormatting;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,13 +9,14 @@ public class AffixData {
 
     private String name;
     private double weight;
-    private String color;
+    private String colorNum;
     private String displayName;
     private boolean disabled;
-    private String tooltip;
     private boolean finalAffix;
     private Map<String, List<AttributeEffect>> effects;
     private List<String> sounds;
+    private boolean hidden;
+    private double percentage;
 
     public String getName() {
         return name != null ? name : "";
@@ -25,10 +25,24 @@ public class AffixData {
         return weight;
     }
 
-    public ChatFormatting getColor() {
-        String value = color != null ? color : "WHITE";
-        ChatFormatting format = ChatFormatting.getByName(value.toUpperCase());
-        return format != null ? format : ChatFormatting.WHITE;
+    public int getColorNumber() {
+        if (colorNum == null)
+            return 0xFFFFFFFF;
+
+        int color;
+
+        try {
+            color = (int) Long.parseLong(
+                    colorNum
+                            .replace("0x", "")
+                            .replace("#", ""),
+                    16
+            );
+        } catch (NumberFormatException e) {
+            return 0xFFFFFFFF;
+        }
+
+        return color;
     }
 
     public List<AttributeEffect> getEffectsFor(String type) {
@@ -46,10 +60,6 @@ public class AffixData {
         return disabled;
     }
 
-    public String getTooltip() {
-        return tooltip != null ? tooltip : "";
-    }
-
     public boolean isFinal() {
         return finalAffix;
     }
@@ -57,4 +67,10 @@ public class AffixData {
     public List<String> getSounds() {
         return sounds != null ? sounds : List.of();
     }
+
+    public boolean isHidden() {return hidden;}
+
+    public void setPercentage(double value) {percentage = value;}
+
+    public double getPercentage() {return percentage;}
 }

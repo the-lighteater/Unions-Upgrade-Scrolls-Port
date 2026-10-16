@@ -1,10 +1,9 @@
 {
   "name": "ordinary",
   "weight": 0.2,
-  "color": "GREEN",
+  "colorNum": "0xFF54fb54",
   "displayName": "Ordinary",
   "disabled": false,
-  "tooltip": "tooltip.upgrade_scrolls.upgrade_scroll.line_ordinary",
   "finalAffix": false,
 
   "effects": {
