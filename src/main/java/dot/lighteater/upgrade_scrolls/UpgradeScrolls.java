@@ -6,7 +6,7 @@ import dot.lighteater.upgrade_scrolls.item.ModCreativeModTabs;
 import dot.lighteater.upgrade_scrolls.item.ModItems;
 import dot.lighteater.upgrade_scrolls.menu.UpgradeScrollsMenus;
 import dot.lighteater.upgrade_scrolls.network.ModNetwork;
-import dot.lighteater.upgrade_scrolls.scrollsprocedures.AffixLoader;
+import dot.lighteater.upgrade_scrolls.affix.AffixLoader;
 import dot.lighteater.upgrade_scrolls.utility.CursedConfigLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;

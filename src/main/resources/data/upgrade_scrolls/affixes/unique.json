@@ -1,10 +1,9 @@
 {
   "name": "unique",
   "weight": 0.2,
-  "color": "BLUE",
+  "colorNum": "0xFF5454fb",
   "displayName": "Unique",
   "disabled": false,
-  "tooltip": "tooltip.upgrade_scrolls.upgrade_scroll.line_unique",
   "finalAffix": false,
 
   "effects": {

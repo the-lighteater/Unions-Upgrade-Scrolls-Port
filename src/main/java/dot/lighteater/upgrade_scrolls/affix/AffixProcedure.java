@@ -1,4 +1,4 @@
-package dot.lighteater.upgrade_scrolls.scrollsprocedures;
+package dot.lighteater.upgrade_scrolls.affix;
 
 import dot.lighteater.upgrade_scrolls.Config;
 import dot.lighteater.upgrade_scrolls.utility.ModUtility;
@@ -6,13 +6,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
 
 import java.util.*;
 

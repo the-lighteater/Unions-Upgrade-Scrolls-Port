@@ -1,10 +1,9 @@
 {
   "name": "godly",
   "weight": 0.1,
-  "color": "GOLD",
+  "colorNum": "0xFFfba700",
   "displayName": "Godly",
   "disabled": false,
-  "tooltip": "tooltip.upgrade_scrolls.upgrade_scroll.line_godly",
   "finalAffix": false,
 
   "effects": {

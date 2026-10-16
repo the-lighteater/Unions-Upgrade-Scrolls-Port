@@ -1,8 +1,8 @@
 package dot.lighteater.upgrade_scrolls.compat;
 
-import dot.lighteater.upgrade_scrolls.scrollsprocedures.AffixData;
-import dot.lighteater.upgrade_scrolls.scrollsprocedures.AffixLoader;
-import dot.lighteater.upgrade_scrolls.scrollsprocedures.AttributeEffect;
+import dot.lighteater.upgrade_scrolls.affix.AffixData;
+import dot.lighteater.upgrade_scrolls.affix.AffixLoader;
+import dot.lighteater.upgrade_scrolls.affix.AttributeEffect;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;

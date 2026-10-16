@@ -1,10 +1,9 @@
 {
   "name": "junk",
-  "weight": 1.0,
-  "color": "WHITE",
+  "weight": 0.3,
+  "colorNum": "0xFFFFFFFF",
   "displayName": "Junk",
   "disabled": false,
-  "tooltip": "tooltip.upgrade_scrolls.upgrade_scroll.line_junk",
   "finalAffix": false,
 
   "effects": {

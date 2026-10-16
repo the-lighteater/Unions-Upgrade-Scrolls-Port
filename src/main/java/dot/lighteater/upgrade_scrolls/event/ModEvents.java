@@ -4,8 +4,8 @@ import dot.lighteater.upgrade_scrolls.Config;
 import dot.lighteater.upgrade_scrolls.UpgradeScrolls;
 import dot.lighteater.upgrade_scrolls.item.ModItems;
 import dot.lighteater.upgrade_scrolls.item.custom.UpgradeScroll_Item;
-import dot.lighteater.upgrade_scrolls.scrollsprocedures.AffixData;
-import dot.lighteater.upgrade_scrolls.scrollsprocedures.AffixLoader;
+import dot.lighteater.upgrade_scrolls.affix.AffixData;
+import dot.lighteater.upgrade_scrolls.affix.AffixLoader;
 import dot.lighteater.upgrade_scrolls.utility.CursedConfigLoader;
 import dot.lighteater.upgrade_scrolls.utility.ModUtility;
 import net.minecraft.ChatFormatting;
@@ -33,6 +33,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 
@@ -98,12 +100,6 @@ public class ModEvents {
                             affixName.substring(0, 1).toUpperCase()
                                     + affixName.substring(1);
 
-                    ChatFormatting color = affix.getColor();
-
-                    if (color == null) {
-                        color = ChatFormatting.WHITE;
-                    }
-
                     String displayNameValue = affix.getDisplayName();
 
                     if (displayNameValue == null) {
@@ -121,7 +117,7 @@ public class ModEvents {
                                                             .withObfuscated(
                                                                     displayName.equals("Fabled")
                                                             )
-                                                            .withColor(color)
+                                                            .withColor(affix.getColorNumber())
                                             )
                                     )
                     );
@@ -226,24 +222,26 @@ public class ModEvents {
                             ).reversed()
                     )
                     .forEach(affix -> {
+                        double percentage = new BigDecimal(String.valueOf(affix.getPercentage() * 100))
+                                .setScale(2, RoundingMode.UP)
+                                .doubleValue();
 
-                        ChatFormatting color = affix.getColor();
+                        String tooltipKey = (percentage) + "% " + affix.getDisplayName();
 
-                        if (color == null) {
-                            color = ChatFormatting.WHITE;
+                        if (affix.isHidden()) {
+                            tooltip.add(
+                                    Component.translatable(
+                                            tooltipKey
+                                    ).withStyle(style -> style.withColor(affix.getColorNumber()))
+                                            .withStyle(ChatFormatting.OBFUSCATED)
+                            );
+                        } else {
+                            tooltip.add(
+                                    Component.translatable(
+                                            tooltipKey
+                                    ).withStyle(style -> style.withColor(affix.getColorNumber()))
+                            );
                         }
-
-                        String tooltipKey = affix.getTooltip();
-
-                        if (tooltipKey == null || tooltipKey.isEmpty()) {
-                            return;
-                        }
-
-                        tooltip.add(
-                                Component.translatable(
-                                        tooltipKey
-                                ).withStyle(color)
-                        );
                     });
         }
     }

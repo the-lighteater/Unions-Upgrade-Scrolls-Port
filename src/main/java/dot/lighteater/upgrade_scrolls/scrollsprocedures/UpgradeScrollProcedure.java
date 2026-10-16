@@ -1,5 +1,7 @@
 package dot.lighteater.upgrade_scrolls.scrollsprocedures;
 
+import dot.lighteater.upgrade_scrolls.affix.AffixData;
+import dot.lighteater.upgrade_scrolls.affix.AffixLoader;
 import dot.lighteater.upgrade_scrolls.utility.ModUtility;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -137,7 +139,7 @@ public class UpgradeScrollProcedure {
                 .append(Component.literal(" rolled the "))
                 .append(Component.literal(affix.getName().toUpperCase())
                         .setStyle(Style.EMPTY.withObfuscated(affix.getName().equals("fabled")))
-                        .withStyle(affix.getColor()))
+                        .withStyle(style -> style.withColor(affix.getColorNumber())))
                 .append(Component.literal(" affix on their "))
                 .append(stack.getHoverName().copy());
 
