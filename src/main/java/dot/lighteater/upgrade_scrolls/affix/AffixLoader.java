@@ -35,8 +35,6 @@ public class AffixLoader extends SimpleJsonResourceReloadListener {
                 AffixData affix = GSON.fromJson(entry.getValue(), AffixData.class);
                 AFFIXES.put(entry.getKey(), affix);
 
-                UpgradeScrolls.LOGGER.debug("Affix Chance for {} is {}", affix.getDisplayName(), affix.getWeight());
-
                 total += affix.getWeight();
             } catch (Exception e) {
                 System.err.println("Failed to load affix: " + entry.getKey());
@@ -45,9 +43,6 @@ public class AffixLoader extends SimpleJsonResourceReloadListener {
 
         for (Map.Entry<ResourceLocation, AffixData> affixEntry : AFFIXES.entrySet()) {
             AffixData data = affixEntry.getValue();
-            UpgradeScrolls.LOGGER.debug("Affix {} with weight {} has a chance of {}",
-                    data.getDisplayName(), data.getWeight(), (data.getWeight() / total));
-
             data.setPercentage(data.getWeight() / total);
         }
 
