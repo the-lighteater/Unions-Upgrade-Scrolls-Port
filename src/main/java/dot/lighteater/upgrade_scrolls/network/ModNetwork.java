@@ -38,6 +38,15 @@ public class ModNetwork {
                 ScrollAnimationPacket::handle
         );
 
+        CHANNEL.registerMessage(
+                id++,
+                AffixSyncPacket.class,
+                AffixSyncPacket::encode,
+                AffixSyncPacket::decode,
+                AffixSyncPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
+        );
+
         /*
          * Client -> Server
          */

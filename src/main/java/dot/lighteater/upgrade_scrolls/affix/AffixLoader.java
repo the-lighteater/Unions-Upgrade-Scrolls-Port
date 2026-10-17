@@ -3,6 +3,7 @@ package dot.lighteater.upgrade_scrolls.affix;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import dot.lighteater.upgrade_scrolls.UpgradeScrolls;
+import dot.lighteater.upgrade_scrolls.network.AffixSyncPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -46,7 +47,10 @@ public class AffixLoader extends SimpleJsonResourceReloadListener {
             data.setPercentage(data.getWeight() / total);
         }
 
-        System.out.println("Loaded " + AFFIXES.size() + " affixes.");
+        UpgradeScrolls.LOGGER.info(
+                "[AffixLoader] Loaded {} affixes",
+                AFFIXES.size()
+        );
     }
 
     public static Collection<AffixData> getAll() {

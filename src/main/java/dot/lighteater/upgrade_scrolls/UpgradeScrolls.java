@@ -5,12 +5,15 @@ import dot.lighteater.upgrade_scrolls.compat.CurioAffixProcedure;
 import dot.lighteater.upgrade_scrolls.item.ModCreativeModTabs;
 import dot.lighteater.upgrade_scrolls.item.ModItems;
 import dot.lighteater.upgrade_scrolls.menu.UpgradeScrollsMenus;
+import dot.lighteater.upgrade_scrolls.network.AffixSyncPacket;
 import dot.lighteater.upgrade_scrolls.network.ModNetwork;
 import dot.lighteater.upgrade_scrolls.affix.AffixLoader;
 import dot.lighteater.upgrade_scrolls.utility.CursedConfigLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -54,6 +57,11 @@ public class UpgradeScrolls
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
+    }
+
+    @SubscribeEvent
+    public static void onServerStarted(ServerStartedEvent event) {
+        AffixSyncPacket.syncToClients();
     }
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {
