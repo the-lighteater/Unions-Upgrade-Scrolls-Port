@@ -95,16 +95,12 @@ public class UpgradeScroll_Item extends Item {
             ItemStack stack
     ) {
         if (player instanceof ServerPlayer serverPlayer) {
-
-            if (ClientConfig.ALLOW_ANIMATION.get()) {
-
                 ModNetwork.CHANNEL.send(
                         PacketDistributor.PLAYER.with(
                                 () -> serverPlayer
                         ),
                         new ScrollAnimationPacket(stack)
                 );
-            }
         }
     }
 

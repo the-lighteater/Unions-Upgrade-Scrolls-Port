@@ -1,5 +1,7 @@
 package dot.lighteater.upgrade_scrolls.network;
 
+import dot.lighteater.upgrade_scrolls.ClientConfig;
+import dot.lighteater.upgrade_scrolls.UpgradeScrolls;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -30,7 +32,9 @@ public class ScrollAnimationPacket {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.player != null) {
-                mc.gameRenderer.displayItemActivation(stack);
+                if (ClientConfig.ALLOW_ANIMATION.get()) {
+                    mc.gameRenderer.displayItemActivation(stack);
+                }
             }
 
         });

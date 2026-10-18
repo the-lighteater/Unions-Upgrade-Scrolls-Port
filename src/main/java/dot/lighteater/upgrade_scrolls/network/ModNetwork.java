@@ -35,7 +35,8 @@ public class ModNetwork {
                 ScrollAnimationPacket.class,
                 ScrollAnimationPacket::encode,
                 ScrollAnimationPacket::new,
-                ScrollAnimationPacket::handle
+                ScrollAnimationPacket::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT)
         );
 
         CHANNEL.registerMessage(
